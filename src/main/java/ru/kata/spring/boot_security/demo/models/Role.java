@@ -1,4 +1,5 @@
-package ru.kata.spring.boot_security.demo.model;
+package ru.kata.spring.boot_security.demo.models;
+
 
 import org.springframework.security.core.GrantedAuthority;
 
@@ -15,17 +16,19 @@ public class Role implements GrantedAuthority {
     @Column(name = "id")
     private Long id;
 
-    @Column(name = "role")
-    private String role;
+    @Column(name = "name")
+    private String name;
 
+    @Transient
     @ManyToMany(mappedBy = "roles")
     private Set<User> users;
 
     public Role() {
     }
 
-    public Role(String role) {
-        this.role = role;
+    public Role(String name, Set<User> users) {
+        this.name = name;
+        this.users = users;
     }
 
     public Long getId() {
@@ -36,12 +39,12 @@ public class Role implements GrantedAuthority {
         this.id = id;
     }
 
-    public String getRole() {
-        return role;
+    public String getName() {
+        return name;
     }
 
-    public void setRole(String role) {
-        this.role = role;
+    public void setName(String name) {
+        this.name = name;
     }
 
     public Set<User> getUsers() {
@@ -54,29 +57,26 @@ public class Role implements GrantedAuthority {
 
     @Override
     public String getAuthority() {
-        return getRole();
+        return getName();
     }
 
     @Override
     public String toString() {
-        return "Role{" +
-                "id=" + id +
-                ", role='" + role + '\'' +
-                '}';
+        return getName();
     }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        Role role1 = (Role) o;
-        return Objects.equals(id, role1.id) && Objects.equals(role, role1.role);
+        Role role = (Role) o;
+        return Objects.equals(id, role.id) && Objects.equals(name, role.name);
     }
 
     @Override
     public int hashCode() {
         int result = id != null ? id.hashCode() : 0;
-        result = 31 * result + role.hashCode();
+        result = 31 * result + (name != null ? name.hashCode() : 0);
         return result;
     }
 }
