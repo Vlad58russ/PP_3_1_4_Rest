@@ -178,6 +178,13 @@ function deleteModal(id) {
             document.getElementById('deleteSurName').value = u.surname;
             document.getElementById('deleteAge').value = u.age;
             document.getElementById('deleteEmail').value = u.email;
+            const rolesContainer = document.getElementById('deleteRole');
+            rolesContainer.innerHTML = '';
+            u.roles.forEach(role => {
+                const option = document.createElement('option');
+                option.textContent = role.name;
+                rolesContainer.appendChild(option);
+            });
         })
     });
 }
