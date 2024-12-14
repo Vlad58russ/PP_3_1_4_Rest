@@ -5,7 +5,7 @@ async function getRoles() {
     return await fetch("http://localhost:8080/api/admin/roles").then(response => response.json());
 }
 
-function listRoles() {
+function listRoles() { //GET Response for Roles and write in HTML
     let tmp = '';
     getRoles().then(roles => roles.forEach(role => {
         tmp += `<option value="${role.id}">${role.name}</option>`;
@@ -25,6 +25,7 @@ function getUserData() {
             loadTable(data)
         })
 }
+
 
 function getAllUsers() {
     fetch(url).then(response => response.json()).then(user =>
@@ -56,6 +57,9 @@ function loadTable(listAllUsers) {
 }
 getAllUsers();
 
+
+
+// Новый юзер
 document.getElementById('newUserForm').addEventListener('submit', (e) => {
     e.preventDefault()
     let role = document.getElementById('role_select')
@@ -89,6 +93,8 @@ document.getElementById('newUserForm').addEventListener('submit', (e) => {
         })
 })
 
+
+//Изменение юзера
 function editModal(id) {
     fetch(url + '/' + id, {
         headers: {
@@ -96,7 +102,7 @@ function editModal(id) {
             'Content-Type': 'application/json;charset=UTF-8'
         }
     }).then(res => {
-        res.json().then(u => {
+        res.json().then(async u => {
 
             document.getElementById('editId').value = u.id;
             document.getElementById('editNameU').value = u.name;
@@ -104,7 +110,18 @@ function editModal(id) {
             document.getElementById('editAge').value = u.age;
             document.getElementById('editEmail').value = u.email;
             document.getElementById('editPassword').value = u.password;
+            const allRoles = await getRoles();
 
+            const rolesSelect = document.getElementById('editRole');
+            rolesSelect.innerHTML = '';
+
+            allRoles.forEach(role => {
+                const option = document.createElement('option');
+                option.value = role.id;
+                option.textContent = role.name;
+                option.selected = u.roles && u.roles.some(userRole => userRole.id === role.id);
+                rolesSelect.appendChild(option);
+            });
         })
     });
 }
@@ -146,6 +163,8 @@ async function editUser() {
     getUserData()
 }
 
+
+// Удаление юзера
 function deleteModal(id) {
     fetch(url + '/' + id, {
         headers: {
